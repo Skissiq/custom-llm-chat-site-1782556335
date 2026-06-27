@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI 聊天室 (穩定修復版)</title>
+    <title>Qwen 中文大模型 (自製版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { position: fixed; width: 100%; height: 100%; overflow: hidden; background-color: #f8fafc; }
+        body { position: fixed; width: 100%; height: 100%; overflow: hidden; background-color: #f1f5f9; }
         .chat-container { height: calc(100vh - 180px); -webkit-overflow-scrolling: touch; }
-        .message-bubble { max-width: 85%; word-wrap: break-word; border-radius: 1rem; font-size: 15px; line-height: 1.5; }
-        .user-message { background: #3b82f6; color: white; align-self: flex-end; border-bottom-right-radius: 0.2rem; }
-        .ai-message { background: #ffffff; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 0.2rem; border: 1px solid #e2e8f0; }
+        .message-bubble { max-width: 85%; word-wrap: break-word; border-radius: 1.2rem; font-size: 15px; line-height: 1.6; }
+        .user-message { background: #0284c7; color: white; align-self: flex-end; border-bottom-right-radius: 0.2rem; }
+        .ai-message { background: #ffffff; color: #0f172a; align-self: flex-start; border-bottom-left-radius: 0.2rem; border: 1px solid #e2e8f0; }
         @keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }
         .loading-dots span { animation: blink 1.4s infinite both; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -20,40 +20,41 @@
 </head>
 <body class="font-sans text-slate-900">
     <div class="max-w-4xl mx-auto h-full flex flex-col bg-white shadow-2xl">
-        <header class="p-4 border-b bg-white flex items-center justify-between z-10">
+        <header class="p-4 border-b bg-white flex items-center justify-between z-10 shadow-sm">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md"><i class="fas fa-microchip"></i></div>
+                <div class="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-comments"></i></div>
                 <div>
-                    <h1 class="font-bold text-base">Stable Local AI</h1>
+                    <h1 class="font-bold text-base">Qwen AI 助手</h1>
                     <div id="status-container" class="flex items-center space-x-1">
                         <span id="status-dot" class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                        <span id="status-text" class="text-[10px] text-gray-500 font-bold uppercase">連線中...</span>
+                        <span id="status-text" class="text-[10px] text-gray-500 font-bold">準備中...</span>
                     </div>
                 </div>
             </div>
-            <button onclick="location.reload()" class="text-gray-400 p-2 hover:text-blue-600 transition-colors"><i class="fas fa-sync-alt"></i></button>
+            <button onclick="location.reload()" class="text-gray-400 p-2"><i class="fas fa-sync-alt"></i></button>
         </header>
 
-        <div id="loading-overlay" class="p-3 bg-blue-50 border-b">
+        <div id="loading-overlay" class="p-3 bg-sky-50 border-b">
             <div class="flex justify-between mb-1">
-                <span id="progress-label" class="text-[10px] font-bold text-blue-700 uppercase tracking-tighter">正在下載 AI 模型 (約 80MB)...</span>
-                <span id="progress-percent" class="text-[10px] font-bold text-blue-700">0%</span>
+                <span id="progress-label" class="text-[10px] font-bold text-sky-700 uppercase">正在下載中文模型 (約 350MB)...</span>
+                <span id="progress-percent" class="text-[10px] font-bold text-sky-700">0%</span>
             </div>
-            <div class="w-full bg-blue-200 rounded-full h-1.5 overflow-hidden">
-                <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+            <div class="w-full bg-sky-200 rounded-full h-1.5 overflow-hidden">
+                <div id="progress-bar" class="bg-sky-600 h-full transition-all duration-300" style="width: 0%"></div>
             </div>
         </div>
 
         <div id="chat-window" class="chat-container flex-1 overflow-y-auto p-4 flex flex-col space-y-4 bg-slate-50">
             <div class="ai-message message-bubble p-4 shadow-sm">
-                你好！我是你的自製大模型。我現在已經更換為更穩定的核心，可以開始聊天了。
+                你好！我是 Qwen 大模型。我現在具備強大的中文對話能力。
+                載入完成後，你可以問我任何問題！
             </div>
         </div>
 
-        <div class="p-4 border-t bg-white pb-8 md:pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="p-4 border-t bg-white pb-8 md:pb-4 shadow-inner">
             <form id="chat-form" class="flex space-x-2">
-                <input type="text" id="user-input" disabled class="flex-1 border border-slate-200 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-slate-50 transition-all" placeholder="請稍候...">
-                <button type="submit" id="send-btn" disabled class="bg-blue-600 text-white rounded-2xl px-6 py-3 shadow-lg hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="user-input" disabled class="flex-1 border border-slate-200 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm disabled:bg-slate-50" placeholder="請等待載入...">
+                <button type="submit" id="send-btn" disabled class="bg-sky-600 text-white rounded-2xl px-6 py-3 shadow-lg disabled:opacity-50"><i class="fas fa-paper-plane"></i></button>
             </form>
             <div id="error-display" class="hidden mt-2 p-2 bg-red-50 rounded text-[10px] text-red-600 text-center font-mono border border-red-100"></div>
         </div>
@@ -62,11 +63,8 @@
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
         
-        // 核心穩定性設定
         env.allowLocalModels = false;
         env.useBrowserCache = true;
-        env.remoteHost = 'https://huggingface.co';
-        env.remotePathTemplate = '{model}/resolve/{revision}/';
 
         const chatWindow = document.getElementById('chat-window');
         const chatForm = document.getElementById('chat-form');
@@ -79,13 +77,13 @@
         const sendBtn = document.getElementById('send-btn');
         const errorDisplay = document.getElementById('error-display');
 
-        let pipe;
+        let generator;
 
         async function init() {
             try {
-                statusText.innerText = "準備模型中...";
-                // 使用 LaMini-Flan-T5-77M，這是一個非常穩定且開放的模型
-                pipe = await pipeline('text2text-generation', 'Xenova/LaMini-Flan-T5-77M', {
+                statusText.innerText = "載入模型中...";
+                // 使用 Qwen1.5-0.5B-Chat，中文能力極強
+                generator = await pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat', {
                     progress_callback: (data) => {
                         if (data.status === 'progress') {
                             const p = Math.round(data.progress);
@@ -93,28 +91,28 @@
                             progressPercent.innerText = p + '%';
                         }
                         if (data.status === 'ready') {
-                            statusText.innerText = "AI 已就緒";
+                            statusText.innerText = "AI 就緒";
                             statusDot.className = "w-2 h-2 rounded-full bg-green-500 animate-none";
                             loadingOverlay.classList.add('hidden');
                             userInput.disabled = false;
                             sendBtn.disabled = false;
-                            userInput.placeholder = "輸入您的問題...";
+                            userInput.placeholder = "說點什麼吧...";
                             userInput.focus();
                         }
                     }
                 });
             } catch (err) {
                 console.error(err);
-                statusText.innerText = "啟動失敗";
+                statusText.innerText = "載入失敗";
                 statusDot.className = "w-2 h-2 rounded-full bg-red-500 animate-none";
-                errorDisplay.innerText = "修復建議：請關閉無痕模式或切換網路後重新整理。\n系統訊息: " + err.message;
+                errorDisplay.innerText = "系統訊息: " + err.message;
                 errorDisplay.classList.remove('hidden');
             }
         }
 
         function appendMessage(text, isUser) {
             const div = document.createElement('div');
-            div.className = 'message-bubble p-4 shadow-sm ' + (isUser ? 'user-message shadow-blue-200' : 'ai-message');
+            div.className = 'message-bubble p-4 shadow-sm ' + (isUser ? 'user-message' : 'ai-message');
             div.innerHTML = text.replace(/\n/g, '<br>');
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -124,22 +122,33 @@
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = userInput.value.trim();
-            if (!text || !pipe) return;
+            if (!text || !generator) return;
 
             appendMessage(text, true);
             userInput.value = '';
             userInput.disabled = true;
             sendBtn.disabled = true;
 
-            const aiBubble = appendMessage('<span class="loading-dots">AI 思考中<span>.</span><span>.</span><span>.</span></span>', false);
+            const aiBubble = appendMessage('<span class="loading-dots">思考中<span>.</span><span>.</span><span>.</span></span>', false);
 
             try {
-                const output = await pipe(text, {
-                    max_new_tokens: 256,
+                // Qwen 聊天格式
+                const messages = [
+                    { role: 'system', content: '你是一個樂於助人的 AI 助手。' },
+                    { role: 'user', content: text }
+                ];
+                
+                // 構造 Prompt
+                const prompt = `<|im_start|>system\n你是一個樂於助人的 AI 助手。<|im_end|>\n<|im_start|>user\n${text}<|im_end|>\n<|im_start|>assistant\n`;
+
+                const output = await generator(prompt, {
+                    max_new_tokens: 512,
                     temperature: 0.7,
                     do_sample: true,
+                    top_p: 0.9,
                 });
-                const response = output[0].generated_text || "我現在無法生成回應，請再試一次。";
+
+                const response = output[0].generated_text.split('<|im_start|>assistant\n')[1] || "我現在不知道該說什麼...";
                 aiBubble.innerHTML = response.trim();
             } catch (err) {
                 aiBubble.innerHTML = "生成出錯：" + err.message;
