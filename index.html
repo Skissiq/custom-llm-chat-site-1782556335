@@ -1,162 +1,65 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI 助手 (穩定極速版)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { position: fixed; width: 100%; height: 100%; overflow: hidden; background-color: #f0f2f5; }
-        .chat-container { height: calc(100vh - 180px); -webkit-overflow-scrolling: touch; }
-        .message-bubble { max-width: 85%; word-wrap: break-word; border-radius: 1.2rem; font-size: 15px; line-height: 1.5; }
-        .user-message { background: #1877f2; color: white; align-self: flex-end; border-bottom-right-radius: 0.2rem; }
-        .ai-message { background: #ffffff; color: #1c1e21; align-self: flex-start; border-bottom-left-radius: 0.2rem; border: 1px solid #dddfe2; }
-        @keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }
-        .loading-dots span { animation: blink 1.4s infinite both; }
-        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111314" />
+  <meta name="description" content="MyCustomLLM：在瀏覽器中執行的繁體中文 AI 聊天室。" />
+  <title>MyCustomLLM · 瀏覽器 AI 聊天室</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Avenir Next","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:#f7f4ec;background:#111314;font-synthesis:none;text-rendering:optimizeLegibility}*{box-sizing:border-box}html,body{width:100%;min-width:320px;min-height:100%;margin:0}body{min-height:100svh;background:#111314}button,textarea{font:inherit}button{-webkit-tap-highlight-color:transparent}.app{position:relative;min-height:100svh;overflow:hidden;background:radial-gradient(circle at 84% 8%,rgba(203,143,50,.1),transparent 28%),radial-gradient(circle at 12% 92%,rgba(65,92,76,.12),transparent 25%),#111314}.ambient{position:absolute;pointer-events:none;opacity:.65}.one{width:400px;height:400px;top:-230px;right:8%;border:1px solid rgba(229,180,92,.12);border-radius:50%;box-shadow:0 0 90px rgba(214,145,45,.08)}.two{width:620px;height:620px;bottom:-470px;left:12%;border:1px solid rgba(122,157,120,.09);border-radius:50%}.workspace{position:relative;z-index:1;display:flex;width:min(1440px,100%);min-height:100svh;margin:auto;border-right:1px solid rgba(255,255,255,.05);border-left:1px solid rgba(255,255,255,.05);background:rgba(16,18,18,.78);box-shadow:0 30px 100px rgba(0,0,0,.2)}.side{display:flex;flex:0 0 285px;flex-direction:column;min-height:100svh;padding:27px 22px 20px;border-right:1px solid rgba(255,255,255,.08);background:rgba(20,23,23,.8)}.brand{display:flex;align-items:center;gap:11px;min-height:32px}.mark{display:grid;flex:0 0 32px;place-items:center;width:32px;height:32px;border:1px solid rgba(225,168,70,.5);border-radius:10px;color:#e9b45c;background:linear-gradient(135deg,rgba(223,159,54,.18),rgba(102,75,28,.1));box-shadow:inset 0 0 14px rgba(227,161,59,.1),0 5px 20px rgba(0,0,0,.15)}.mark svg{width:19px;height:19px}.eyebrow{margin:0;color:#b69159;font-size:9px;font-weight:750;letter-spacing:.18em}.brand h1{margin:1px 0 0;color:#f4f0e7;font-size:14px;font-weight:720;letter-spacing:-.02em}.new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:38px 0 28px;padding:12px 14px;border:1px solid rgba(225,168,70,.42);border-radius:10px;color:#f0cc8b;background:linear-gradient(135deg,rgba(191,129,40,.18),rgba(143,99,31,.08));cursor:pointer;font-size:12px;font-weight:680}.new:hover{background:rgba(204,145,53,.22)}.label{display:flex;justify-content:space-between;margin-bottom:10px;color:#8c938e;font-size:10px;font-weight:650;letter-spacing:.08em;text-transform:uppercase}.dot{width:5px;height:5px;border-radius:50%;background:#a0bb8d;box-shadow:0 0 9px #8aaa79}.card{padding:15px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(255,255,255,.025)}.model{display:flex;align-items:center;gap:9px;width:100%;padding:0;border:0;color:inherit;text-align:left;background:transparent}.cpu{display:grid;flex:0 0 29px;place-items:center;width:29px;height:29px;border-radius:9px;color:#efc072;background:rgba(220,160,61,.13);font-size:16px}.model-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:3px}.model-copy strong{overflow:hidden;color:#e8e7dd;font-size:11px;font-weight:650;text-overflow:ellipsis;white-space:nowrap}.model-copy small{color:#777f7c;font-size:10px}.meta{display:flex;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);color:#777f7c;font-size:10px}.tips{margin-top:18px;border-color:rgba(137,165,126,.16);background:linear-gradient(145deg,rgba(83,110,78,.14),rgba(255,255,255,.018))}.tips-title{color:#c0d1af;font-size:11px;font-weight:680}.tips p{margin:9px 0 13px;color:#9aa297;font-size:10px;line-height:1.55}.pill{display:inline-flex;padding:5px 8px;border-radius:6px;color:#a9bc9b;background:rgba(141,172,127,.1);font-size:9px;font-weight:650}.footer{margin-top:auto;padding-top:20px;color:#a1a8a1;font-size:10px}.footer p{margin:8px 0 0;color:#5e6662;font-size:9px}.status{display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#68716c}.status.ready{background:#94bd76;box-shadow:0 0 9px rgba(148,189,118,.68)}.status.loading{background:#e3ae54;box-shadow:0 0 9px rgba(227,174,84,.68);animation:pulse 1.2s infinite}.status.error{background:#dc7464}@keyframes pulse{50%{opacity:.4;transform:scale(.8)}}.main{display:flex;min-width:0;flex:1;flex-direction:column;min-height:100svh}.header{display:flex;align-items:center;justify-content:space-between;min-height:80px;padding:0 42px;border-bottom:1px solid rgba(255,255,255,.065)}.mobile-brand{display:none;align-items:center;gap:8px;color:#e9e5da;font-size:13px}.mobile-brand .mark{width:29px;height:29px;border-radius:9px}.model-state{display:flex;align-items:center;gap:8px;margin-left:32px;color:#8f9892;font-size:10px}.actions{display:flex;align-items:center;gap:11px}.clear,.menu{border:0;color:#727c77;background:transparent;cursor:pointer}.clear{display:flex;align-items:center;gap:6px;padding:7px 9px;border-radius:7px;font-size:10px}.clear:hover{color:#d39d4f;background:rgba(255,255,255,.05)}.menu{display:none}.conversation{width:min(780px,calc(100% - 48px));flex:1;margin:0 auto;padding:58px 0 24px;overflow-y:auto}.intro{margin-bottom:45px}.kicker{color:#8c9e82;font-size:9px;font-weight:750;letter-spacing:.22em}.intro h2{margin:12px 0 10px;color:#f5f0e6;font-family:Georgia,"Noto Serif TC",serif;font-size:clamp(29px,4vw,43px);font-weight:500;letter-spacing:-.045em;line-height:1.12}.intro h2 em{color:#e9b760;font-style:normal}.intro p{margin:0;color:#87908a;font-size:12px;line-height:1.7}.messages{display:flex;flex-direction:column;gap:29px}.row{display:flex;align-items:flex-start;gap:13px;animation:in .25s cubic-bezier(.23,1,.32,1) both}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.row.user{flex-direction:row-reverse}.avatar{display:grid;flex:0 0 29px;place-items:center;width:29px;height:29px;border-radius:10px;font-size:10px;font-weight:750}.ai-avatar{border:1px solid rgba(225,168,70,.3);color:#e2af5d;background:rgba(218,157,53,.1)}.user-avatar{color:#d2ded0;background:#405848}.body{max-width:min(82%,620px)}.user .body{display:flex;flex-direction:column;align-items:flex-end}.name{margin:1px 0 7px;color:#c8ccc3;font-size:10px;font-weight:680}.name span{margin-left:7px;color:#65706a;font-size:9px;font-weight:450}.bubble{white-space:pre-wrap;word-break:break-word;color:#c5cbc4;font-size:13px;line-height:1.8}.ai-bubble{padding:13px 16px;border:1px solid rgba(255,255,255,.065);border-radius:4px 14px 14px 14px;background:rgba(255,255,255,.045);box-shadow:0 8px 25px rgba(0,0,0,.08)}.user-bubble{padding:11px 15px;border:1px solid rgba(102,146,110,.3);border-radius:14px 4px 14px 14px;color:#dce8d8;background:rgba(74,109,82,.42)}.typing{display:flex;gap:5px;width:66px;padding:14px 16px;border:1px solid rgba(255,255,255,.06);border-radius:4px 14px 14px 14px;background:rgba(255,255,255,.04)}.typing i{width:5px;height:5px;border-radius:50%;background:#b18b51;animation:type 1s infinite}.typing i:nth-child(2){animation-delay:.13s}.typing i:nth-child(3){animation-delay:.26s}@keyframes type{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}.composer-wrap{width:min(780px,calc(100% - 48px));margin:auto auto 0;padding:0 0 25px}.error{display:flex;gap:8px;margin-bottom:10px;padding:10px 12px;border:1px solid rgba(226,113,94,.25);border-radius:9px;color:#db9a8b;background:rgba(182,65,50,.1);font-size:10px;line-height:1.55}.error span{flex:1;white-space:pre-wrap}.error button{padding:0;border:0;color:inherit;background:transparent;cursor:pointer}.loading{margin-bottom:12px;padding:13px 15px 11px;border:1px solid rgba(222,166,75,.22);border-radius:10px;background:rgba(201,139,43,.07)}.loading-line,.loading-detail{display:flex;align-items:center;justify-content:space-between;gap:12px}.loading-kicker{display:block;color:#b69159;font-size:9px;letter-spacing:.18em}.loading strong{display:block;margin-top:4px;color:#d7c39b;font-size:10px;font-weight:550}.percent{color:#e5b463;font-size:12px}.track{height:4px;margin:11px 0 8px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.07)}.bar{height:100%;border-radius:inherit;background:linear-gradient(90deg,#ad772b,#e4b45e);transition:width .25s}.bar.error{background:#bd6959}.loading-detail{color:#817a68;font-size:9px}.suggestions{display:flex;gap:7px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}.suggestions::-webkit-scrollbar{display:none}.suggestions button{display:inline-flex;flex:0 0 auto;align-items:center;gap:6px;padding:7px 10px;border:1px solid rgba(255,255,255,.08);border-radius:99px;color:#929993;background:rgba(255,255,255,.025);cursor:pointer;font-size:9px}.suggestions button:hover{border-color:rgba(218,163,75,.35);color:#d3ae71;background:rgba(218,163,75,.08)}.composer{display:flex;align-items:flex-end;gap:10px;min-height:61px;padding:12px 12px 12px 17px;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:rgba(28,31,30,.88);box-shadow:0 15px 35px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.025)}.composer:focus-within{border-color:rgba(218,163,75,.46);box-shadow:0 15px 35px rgba(0,0,0,.2),0 0 0 3px rgba(218,163,75,.06)}textarea{flex:1;min-height:23px;max-height:120px;resize:none;border:0;outline:0;color:#e0e3da;background:transparent;font-size:12px;line-height:1.7}textarea::placeholder{color:#68706c}textarea:disabled{opacity:.6}.composer-actions{display:flex;align-items:center;gap:8px}.clip,.send{display:grid;place-items:center;padding:0;border:0;cursor:pointer}.clip{width:29px;height:29px;color:#717974;background:transparent}.send{width:34px;height:34px;border-radius:10px;color:#1e211e;background:#dba752;box-shadow:0 5px 14px rgba(218,163,75,.17)}.send:hover{background:#efbd68}.send:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}.stop{color:#eed5b1;background:#6d4934}.note{display:flex;align-items:center;justify-content:center;gap:5px;margin:10px 0 0;color:#5e6862;font-size:9px}@media(max-width:760px){.workspace{border:0}.side{position:absolute;z-index:10;top:0;bottom:0;left:0;width:min(285px,86vw);min-height:100%;transform:translateX(-105%);box-shadow:20px 0 70px rgba(0,0,0,.4);transition:transform .25s cubic-bezier(.23,1,.32,1)}.side.open{transform:translateX(0)}.header{min-height:67px;padding:0 18px}.mobile-brand{display:flex}.model-state{display:none}.clear{padding:7px;font-size:0}.clear svg{width:17px;height:17px}.menu{display:grid;width:30px;height:30px;place-items:center}.conversation{width:calc(100% - 34px);padding-top:39px}.intro{margin-bottom:35px}.intro h2{font-size:32px}.intro p{font-size:11px}.body{max-width:86%}.bubble{font-size:12px}.composer-wrap{width:calc(100% - 34px);padding-bottom:17px}.composer{min-height:57px;padding-left:13px}.note{font-size:8px}}
+  </style>
 </head>
-<body class="font-sans">
-    <div class="max-w-4xl mx-auto h-full flex flex-col bg-white shadow-lg">
-        <header class="p-4 border-b bg-white flex items-center justify-between z-10">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md"><i class="fas fa-robot"></i></div>
-                <div>
-                    <h1 class="font-bold text-base">Stable AI Chat</h1>
-                    <div id="status-container" class="flex items-center space-x-1">
-                        <span id="status-dot" class="w-2 h-2 rounded-full bg-yellow-500"></span>
-                        <span id="status-text" class="text-[10px] text-gray-500 font-bold uppercase">正在建立連線...</span>
-                    </div>
-                </div>
-            </div>
-            <button onclick="location.reload()" class="text-gray-400 p-2"><i class="fas fa-sync-alt"></i></button>
-        </header>
+<body>
+<div class="app"><div class="ambient one"></div><div class="ambient two"></div><div class="workspace">
+  <aside class="side" id="side">
+    <div class="brand"><div class="mark">⌁</div><div><p class="eyebrow">LOCAL INTELLIGENCE</p><h1>MyCustomLLM</h1></div></div>
+    <button class="new" id="newChat">＋ 新對話</button>
+    <section class="card"><div class="label"><span>執行模型</span><i class="dot"></i></div><div class="model"><span class="cpu">◈</span><span class="model-copy"><strong>TinyLlama 1.1B · Q4</strong><small>瀏覽器端 · 量化推理</small></span></div><div class="meta"><span>Q4 量化</span><span>無需 API Key</span></div></section>
+    <section class="card tips"><div class="tips-title">✦ 使用提示</div><p>首次使用需要下載模型權重。完成後會快取在瀏覽器，之後開啟速度會更快。</p><span class="pill">⚡ 適合 iPhone 11 · Safari</span></section>
+    <div class="footer"><div><span class="status" id="sideStatus"></span><span id="sideStatusText">等待載入</span></div><p>單檔 HTML · GitHub Pages ready</p></div>
+  </aside>
+  <section class="main">
+    <header class="header"><div class="mobile-brand"><div class="mark">⌁</div><strong>MyCustomLLM</strong></div><div class="model-state"><span class="status" id="headerStatus"></span><span id="headerStatusText">瀏覽器 AI</span></div><div class="actions"><button class="clear" id="clearChat">⌫ 清除對話</button><button class="menu" id="menuBtn" aria-label="開啟側欄">☰</button></div></header>
+    <div class="conversation"><div class="intro"><span class="kicker">PRIVATE · LOCAL · OPEN</span><h2>和你的模型，<em>直接對話。</em></h2><p>所有推理都在瀏覽器內完成。你的對話不會被送到遠端 API。</p></div><div class="messages" id="messages"></div></div>
+    <div class="composer-wrap"><div class="error" id="errorBox" hidden><span id="errorText"></span><button id="closeError">×</button></div><div class="loading" id="loadingBox" hidden><div class="loading-line"><div><span class="loading-kicker">MODEL STATUS</span><strong id="loadingText">準備中…</strong></div><span class="percent" id="percent">0%</span></div><div class="track"><div class="bar" id="bar" style="width:2%"></div></div><div class="loading-detail"><span id="downloaded">首次載入可能需要幾分鐘</span><span>不關閉分頁即可繼續</span></div></div><div class="suggestions"><button data-suggestion="請用繁體中文解釋什麼是瀏覽器端 AI？">◌ 瀏覽器端 AI 是什麼？</button><button data-suggestion="請計算 (128 × 37) + 864，並列出步驟。">⌘ 試算一道數學題</button><button data-suggestion="幫我寫一段簡短的自我介紹，語氣自然。">✦ 幫我寫點東西</button></div><form class="composer" id="form"><textarea id="input" rows="1" placeholder="輸入訊息…（Enter 傳送，Shift + Enter 換行）"></textarea><div class="composer-actions"><button type="button" class="clip" aria-label="附件功能尚未開放">⌕</button><button type="submit" class="send" id="send">➤</button></div></form><p class="note">⌁ 本機推理 · 對話只保存在你的瀏覽器</p></div>
+  </section>
+</div></div>
+<script type="module">
+  import { AutoTokenizer, AutoModelForCausalLM, env } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
+  env.allowLocalModels = false;
+  env.useBrowserCache = true;
+  env.backends.onnx.wasm.numThreads = Math.min(2, navigator.hardwareConcurrency || 2);
 
-        <div id="loading-overlay" class="p-3 bg-blue-50 border-b">
-            <div class="flex justify-between mb-1">
-                <span id="progress-label" class="text-[10px] font-bold text-blue-700">正在下載 AI 大腦 (約 180MB)...</span>
-                <span id="progress-percent" class="text-[10px] font-bold text-blue-700">0%</span>
-            </div>
-            <div class="w-full bg-blue-200 rounded-full h-1.5 overflow-hidden">
-                <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <div id="chat-window" class="chat-container flex-1 overflow-y-auto p-4 flex flex-col space-y-4 bg-gray-50">
-            <div class="ai-message message-bubble p-4 shadow-sm">
-                你好！我是 TinyLlama。我是一個完全開放、穩定的 AI 模型。
-                我現在已經針對你的設備進行了優化，請稍等載入完成。
-            </div>
-        </div>
-
-        <div class="p-4 border-t bg-white pb-8 md:pb-4">
-            <form id="chat-form" class="flex space-x-2">
-                <input type="text" id="user-input" disabled class="flex-1 border border-gray-200 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-50" placeholder="等待模型載入...">
-                <button type="submit" id="send-btn" disabled class="bg-blue-600 text-white rounded-xl px-5 py-3 shadow-md disabled:opacity-50"><i class="fas fa-paper-plane"></i></button>
-            </form>
-            <div id="error-display" class="hidden mt-2 p-2 bg-red-50 rounded text-[10px] text-red-600 text-center font-mono border border-red-100"></div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
-        
-        // 極致穩定性設定
-        env.allowLocalModels = false;
-        env.useBrowserCache = true;
-
-        const chatWindow = document.getElementById('chat-window');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const statusText = document.getElementById('status-text');
-        const statusDot = document.getElementById('status-dot');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const sendBtn = document.getElementById('send-btn');
-        const errorDisplay = document.getElementById('error-display');
-
-        let generator;
-
-        async function init() {
-            try {
-                statusText.innerText = "準備模型引擎...";
-                // 使用 TinyLlama-1.1B-Chat-v1.0 的量化版，它是目前最穩定的開源選擇
-                generator = await pipeline('text-generation', 'Xenova/TinyLlama-1.1B-Chat-v1.0', {
-                    quantized: true,
-                    progress_callback: (data) => {
-                        if (data.status === 'progress') {
-                            const p = Math.round(data.progress);
-                            progressBar.style.width = p + '%';
-                            progressPercent.innerText = p + '%';
-                        }
-                        if (data.status === 'ready') {
-                            statusText.innerText = "AI 已就緒";
-                            statusDot.className = "w-2 h-2 rounded-full bg-green-500";
-                            loadingOverlay.classList.add('hidden');
-                            userInput.disabled = false;
-                            sendBtn.disabled = false;
-                            userInput.placeholder = "輸入訊息...";
-                            userInput.focus();
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error(err);
-                statusText.innerText = "啟動失敗";
-                statusDot.className = "w-2 h-2 rounded-full bg-red-500";
-                errorDisplay.innerText = "錯誤訊息: " + err.message + "\n請嘗試切換網路或刷新。";
-                errorDisplay.classList.remove('hidden');
-            }
-        }
-
-        function appendMessage(text, isUser) {
-            const div = document.createElement('div');
-            div.className = 'message-bubble p-4 shadow-sm ' + (isUser ? 'user-message' : 'ai-message');
-            div.innerHTML = text.replace(/\n/g, '<br>');
-            chatWindow.appendChild(div);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            return div;
-        }
-
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text || !generator) return;
-
-            appendMessage(text, true);
-            userInput.value = '';
-            userInput.disabled = true;
-            sendBtn.disabled = true;
-
-            const aiBubble = appendMessage('<span class="loading-dots">思考中<span>.</span><span>.</span><span>.</span></span>', false);
-
-            try {
-                // TinyLlama Prompt 格式
-                const prompt = `<|system|>\nYou are a helpful assistant.</s>\n<|user|>\n${text}</s>\n<|assistant|>\n`;
-
-                const output = await generator(prompt, {
-                    max_new_tokens: 128,
-                    temperature: 0.7,
-                    do_sample: true,
-                    top_k: 50,
-                });
-
-                const response = output[0].generated_text.split('<|assistant|>\n')[1] || "Sorry, I can't answer that.";
-                aiBubble.innerHTML = response.trim();
-            } catch (err) {
-                aiBubble.innerHTML = "生成出錯：" + err.message;
-            } finally {
-                userInput.disabled = false;
-                sendBtn.disabled = false;
-                userInput.focus();
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
-        });
-
-        init();
-    </script>
+  const MODEL = "Xenova/TinyLlama-1.1B-Chat-v1.0";
+  const KEY = "my-custom-llm-chat-v2";
+  const $ = (id) => document.getElementById(id);
+  const messagesEl = $("messages"), input = $("input"), form = $("form"), send = $("send");
+  let tokenizer = null, model = null, loading = false, generating = false, stopped = false;
+  const welcome = { role: "assistant", content: "你好，我是 MyCustomLLM。\n\n我會在你的瀏覽器裡執行真正的語言模型，不需要 API 金鑰。第一次使用請先載入模型，之後權重會留在瀏覽器快取中。你可以問我常識、寫作、程式或數學問題。", time: "現在" };
+  const time = () => new Intl.DateTimeFormat("zh-TW", { hour:"2-digit", minute:"2-digit" }).format(new Date());
+  const id = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  function saved(){ try { const v=JSON.parse(localStorage.getItem(KEY)||"null"); return Array.isArray(v)&&v.length?v:[welcome]; } catch { return [welcome]; } }
+  let history = saved();
+  function render(){ messagesEl.innerHTML=""; history.forEach(m=>{ const row=document.createElement("div"); row.className=`row ${m.role === "user" ? "user":"assistant"}`; row.innerHTML=`<div class="avatar ${m.role === "user" ? "user-avatar":"ai-avatar"}">${m.role === "user" ? "你":"✦"}</div><div class="body"><div class="name">${m.role === "user" ? "你":"MyCustomLLM"} <span>${m.time||""}</span></div><div class="bubble ${m.role === "user" ? "user-bubble":"ai-bubble"}"></div></div>`; row.querySelector(".bubble").textContent=m.content; messagesEl.appendChild(row); }); messagesEl.parentElement.scrollTop=messagesEl.parentElement.scrollHeight; localStorage.setItem(KEY,JSON.stringify(history.slice(-30))); }
+  function setState(state,text){ [$("sideStatus"),$("headerStatus")].forEach(el=>el.className=`status ${state||""}`); $("sideStatusText").textContent=text; $("headerStatusText").textContent=state === "ready" ? "TinyLlama 已就緒" : state === "loading" ? "模型載入中" : state === "error" ? "載入失敗" : "瀏覽器 AI"; }
+  function showError(text){ $("errorText").textContent=text; $("errorBox").hidden=false; }
+  function bytes(n){ return n>0 ? `${Math.round(n/1024/1024)} MB` : "準備中"; }
+  async function loadModel(){
+    if(model&&tokenizer) return true; if(loading) return false; loading=true; $("loadingBox").hidden=false; setState("loading","模型下載中");
+    try{
+      const progress_callback=(e)=>{ if(e.status === "progress"){ const p=Math.max(0,Math.min(100,Number(e.progress||0))); $("bar").style.width=`${p}%`; $("percent").textContent=`${Math.round(p)}%`; $("downloaded").textContent=e.loaded?`已下載 ${bytes(e.loaded)}`:"下載模型權重…"; $("loadingText").textContent=`下載模型權重 ${Math.round(p)}%`; } else if(e.status === "initiate") $("loadingText").textContent=`準備 ${e.file||"模型檔案"}…`; else if(e.status === "done") $("loadingText").textContent="模型檔案已下載，正在初始化…"; };
+      tokenizer=await AutoTokenizer.from_pretrained(MODEL,{progress_callback}); model=await AutoModelForCausalLM.from_pretrained(MODEL,{quantized:true,progress_callback,device:"wasm"}); $("bar").style.width="100%"; $("percent").textContent="100%"; $("loadingText").textContent="模型已就緒，可開始對話"; setState("ready","模型已就緒"); return true;
+    }catch(e){ console.error(e); setState("error","載入失敗"); $("bar").classList.add("error"); $("percent").textContent="!"; $("loadingText").textContent="載入失敗"; showError("模型載入失敗。請確認網路可連線，或重新整理頁面再試。\n"+String(e)); return false; } finally { loading=false; }
+  }
+  async function reply(text){
+    if(!(await loadModel())||stopped)return; generating=true; stopped=false; send.textContent="■"; send.classList.add("stop"); setState("ready","模型正在思考…");
+    const recent=history.slice(-8).filter(m=>m.role!=="system"); const conversation=[{role:"system",content:"你是 MyCustomLLM，一個友善、誠實、擅長繁體中文的 AI 助手。請直接回答問題；數學題請列出簡潔的計算步驟並再次檢查結果。若不確定，請明確說不確定，不要捏造資料。"},...recent.map(m=>({role:m.role,content:m.content})),{role:"user",content:text}];
+    try{ const prompt=tokenizer.apply_chat_template?tokenizer.apply_chat_template(conversation,{tokenize:false,add_generation_prompt:true}):conversation.map(m=>`${m.role}: ${m.content}`).join("\n")+"\nassistant:"; const inputs=await tokenizer(prompt,{return_tensors:"pt"}); const out=await model.generate({...inputs,max_new_tokens:192,do_sample:true,temperature:.65,top_p:.9,repetition_penalty:1.08,pad_token_id:tokenizer.eos_token_id}); if(stopped)return; const raw=tokenizer.batch_decode(out,{skip_special_tokens:true})[0]||""; const answer=(raw.split("assistant").pop()||raw).replace(/^\s*[:：-]?\s*/,"").trim()||"我暫時沒有生成出內容，請再試一次。"; history.push({role:"assistant",content:answer,time:time(),id:id()}); render(); setState("ready","模型已就緒"); }catch(e){ console.error(e); showError("生成時發生錯誤。請按停止後重新送出。\n"+String(e)); setState("error","生成失敗"); } finally { generating=false; stopped=false; send.textContent="➤"; send.classList.remove("stop"); }
+  }
+  form.addEventListener("submit",async e=>{e.preventDefault(); const text=input.value.trim(); if(!text||generating||loading)return; history.push({role:"user",content:text,time:time(),id:id()}); input.value=""; render(); await reply(text);});
+  send.addEventListener("click",()=>{if(generating){stopped=true;generating=false;send.textContent="➤";send.classList.remove("stop");setState("ready","已停止生成");}});
+  $("newChat").addEventListener("click",()=>{history=[welcome];render();input.focus();}); $("clearChat").addEventListener("click",()=>{history=[welcome];render();input.focus();}); $("closeError").addEventListener("click",()=>$("errorBox").hidden=true); $("menuBtn").addEventListener("click",()=>$("side").classList.toggle("open")); document.querySelectorAll("[data-suggestion]").forEach(b=>b.addEventListener("click",()=>{input.value=b.dataset.suggestion;input.focus();})); input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();form.requestSubmit();}}); render();
+</script>
 </body>
 </html>
